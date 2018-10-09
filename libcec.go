@@ -51,13 +51,14 @@ type cecAdapter struct {
 	Comm string
 }
 
-func cecInit(deviceName string) (C.libcec_connection_t, error) {
+func cecInit(c *Connection, deviceName string) (C.libcec_connection_t, error) {
 	var connection C.libcec_connection_t
 	var conf C.libcec_configuration
 
 	conf.clientVersion = C.uint32_t(C.LIBCEC_VERSION_CURRENT)
 
 	conf.deviceTypes.types[0] = C.CEC_DEVICE_TYPE_RECORDING_DEVICE
+	conf.callbackParam = unsafe.Pointer(c)
 
 	C.setName(&conf, C.CString(deviceName))
 	C.setupCallbacks(&conf)

@@ -17,7 +17,20 @@ func logMessageCallback(c unsafe.Pointer, msg *C.cec_log_message) C.int {
 
 //export commandReceived
 func commandReceived(c unsafe.Pointer, msg *C.cec_command) C.int {
-	log.Printf("%v", msg)
+	// log.Printf("%v", msg)
+
+	conn := (*Connection)(c)
+	cmd := &Command{
+		initiator:   uint32(msg.initiator),
+		destination: uint32(msg.destination),
+		ack:         int8(msg.ack),
+		eom:         int8(msg.eom),
+		opcode:      int(msg.opcode),
+		// parameters: todo
+		opcode_set:       int8(msg.opcode_set),
+		transmit_timeout: int32(msg.transmit_timeout),
+	}
+	conn.commandReceived(cmd)
 
 	return 0
 }

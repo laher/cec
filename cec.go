@@ -17,6 +17,17 @@ type Device struct {
 	PhysicalAddress string
 }
 
+type Command struct {
+	initiator        uint32  /**< the logical address of the initiator of this message */
+	destination      uint32  /**< the logical address of the destination of this message */
+	ack              int8    /**< 1 when the ACK bit is set, 0 otherwise */
+	eom              int8    /**< 1 when the EOM bit is set, 0 otherwise */
+	opcode           int     /**< the opcode of this message */
+	parameters       []uint8 /**< the parameters attached to this message */
+	opcode_set       int8    /**< 1 when an opcode is set, 0 otherwise (POLL message) */
+	transmit_timeout int32   /**< the timeout to use in ms */
+}
+
 var logicalNames = []string{"TV", "Recording", "Recording2", "Tuner",
 	"Playback", "Audio", "Tuner2", "Tuner3",
 	"Playback2", "Recording3", "Tuner4", "Playback3",
@@ -60,7 +71,7 @@ func Open(name string, deviceName string) (*Connection, error) {
 
 	var err error
 
-	c.connection, err = cecInit(deviceName)
+	c.connection, err = cecInit(c, deviceName)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -116,6 +127,10 @@ func (c *Connection) Key(address int, key interface{}) {
 		log.Println(er)
 		return
 	}
+}
+
+func (c *Connection) commandReceived(msg *Command) {
+	log.Printf("cec command: %x", msg.opcode)
 }
 
 // List - list active devices (returns a map of Devices)
