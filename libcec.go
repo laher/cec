@@ -10,12 +10,13 @@ package cec
 ICECCallbacks g_callbacks;
 // callbacks.go exports
 void logMessageCallback(void *, const cec_log_message *);
+void commandReceived(void *, const cec_command *);
 
 void setupCallbacks(libcec_configuration *conf)
 {
 	g_callbacks.logMessage = &logMessageCallback;
 	g_callbacks.keyPress = NULL;
-	g_callbacks.commandReceived = NULL;
+	g_callbacks.commandReceived = &commandReceived;
 	g_callbacks.configurationChanged = NULL;
 	g_callbacks.alert = NULL;
 	g_callbacks.menuStateChanged = NULL;

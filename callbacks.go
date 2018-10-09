@@ -14,3 +14,10 @@ func logMessageCallback(c unsafe.Pointer, msg *C.cec_log_message) C.int {
 
 	return 0
 }
+
+//export commandReceived
+func commandReceived(c unsafe.Pointer, msg *C.cec_command) C.int {
+	log.Printf("%v", msg)
+
+	return 0
+}
