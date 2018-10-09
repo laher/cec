@@ -26,6 +26,7 @@ type Command struct {
 	parameters       []uint8 /**< the parameters attached to this message */
 	opcode_set       int8    /**< 1 when an opcode is set, 0 otherwise (POLL message) */
 	transmit_timeout int32   /**< the timeout to use in ms */
+	Operation        string
 }
 
 var logicalNames = []string{"TV", "Recording", "Recording2", "Tuner",
@@ -207,6 +208,10 @@ func (c *Connection) Key(address int, key interface{}) {
 
 func (c *Connection) commandReceived(msg *Command) {
 	log.Printf("cec command: %x = %s", msg.opcode, opcodes[msg.opcode])
+
+	if c.Commands != nil {
+		c.Commands <- msg
+	}
 }
 
 // List - list active devices (returns a map of Devices)

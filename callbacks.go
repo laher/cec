@@ -29,6 +29,7 @@ func commandReceived(c unsafe.Pointer, msg *C.cec_command) C.int {
 		// parameters: todo
 		opcode_set:       int8(msg.opcode_set),
 		transmit_timeout: int32(msg.transmit_timeout),
+		Operation:        opcodes[int(msg.opcode)],
 	}
 	conn.commandReceived(cmd)
 

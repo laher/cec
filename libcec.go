@@ -44,6 +44,7 @@ import (
 // Connection class
 type Connection struct {
 	connection C.libcec_connection_t
+	Commands   chan *Command
 }
 
 type cecAdapter struct {
