@@ -5,12 +5,24 @@ package cec
 //#cgo CFLAGS: -Iinclude
 //#cgo LDFLAGS: -lcec
 #include <stdio.h>
+#include <stdlib.h>
 #include <libcec/cecc.h>
+#include <stdint.h>
 
 ICECCallbacks g_callbacks;
 // callbacks.go exports
 void logMessageCallback(void *, const cec_log_message *);
 void commandReceived(void *, const cec_command *);
+
+libcec_configuration * allocConfiguration()  {
+	libcec_configuration * ret = (libcec_configuration*)malloc(sizeof(libcec_configuration));
+	memset(ret, 0, sizeof(libcec_configuration));
+	return ret;
+}
+
+void freeConfiguration(libcec_configuration * conf) {
+	free(conf);
+}
 
 void setupCallbacks(libcec_configuration *conf)
 {
@@ -54,17 +66,18 @@ type cecAdapter struct {
 
 func cecInit(c *Connection, deviceName string) (C.libcec_connection_t, error) {
 	var connection C.libcec_connection_t
-	var conf C.libcec_configuration
+	var conf *C.libcec_configuration = C.allocConfiguration()
+	defer C.freeConfiguration(conf)
 
 	conf.clientVersion = C.uint32_t(C.LIBCEC_VERSION_CURRENT)
 
 	conf.deviceTypes.types[0] = C.CEC_DEVICE_TYPE_RECORDING_DEVICE
 	conf.callbackParam = unsafe.Pointer(c)
 
-	C.setName(&conf, C.CString(deviceName))
-	C.setupCallbacks(&conf)
+	C.setName(conf, C.CString(deviceName))
+	C.setupCallbacks(conf)
 
-	connection = C.libcec_initialise(&conf)
+	connection = C.libcec_initialise(conf)
 	if connection == C.libcec_connection_t(nil) {
 		return connection, errors.New("Failed to init CEC")
 	}
