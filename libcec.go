@@ -59,6 +59,7 @@ type Connection struct {
 	connection C.libcec_connection_t
 	Commands   chan *Command
 	KeyPresses chan int
+	Messages   chan string
 }
 
 type cecAdapter struct {

@@ -214,6 +214,14 @@ func (c *Connection) commandReceived(msg *Command) {
 	}
 }
 
+func (c *Connection) messageReceived(msg string) {
+	log.Printf("cec message received: %x", msg)
+
+	if c.Messages != nil {
+		c.Messages <- msg
+	}
+}
+
 func (c *Connection) keyPressed(k int) {
 	log.Printf("cec key pressed: %d", k)
 

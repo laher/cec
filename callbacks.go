@@ -12,6 +12,8 @@ import (
 func logMessageCallback(c unsafe.Pointer, msg *C.cec_log_message) C.int {
 	log.Println(C.GoString(msg.message))
 
+	conn := (*Connection)(c)
+	conn.messageReceived(C.GoString(msg.message))
 	return 0
 }
 
