@@ -13,6 +13,7 @@ ICECCallbacks g_callbacks;
 // callbacks.go exports
 void logMessageCallback(void *, const cec_log_message *);
 void commandReceived(void *, const cec_command *);
+void keyPressed(void *, const cec_keypress *);
 
 libcec_configuration * allocConfiguration()  {
 	libcec_configuration * ret = (libcec_configuration*)malloc(sizeof(libcec_configuration));
@@ -27,7 +28,7 @@ void freeConfiguration(libcec_configuration * conf) {
 void setupCallbacks(libcec_configuration *conf)
 {
 	g_callbacks.logMessage = &logMessageCallback;
-	g_callbacks.keyPress = NULL;
+	g_callbacks.keyPress = &keyPressed;
 	g_callbacks.commandReceived = &commandReceived;
 	g_callbacks.configurationChanged = NULL;
 	g_callbacks.alert = NULL;
@@ -57,6 +58,7 @@ import (
 type Connection struct {
 	connection C.libcec_connection_t
 	Commands   chan *Command
+	KeyPresses chan int
 }
 
 type cecAdapter struct {

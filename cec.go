@@ -214,6 +214,14 @@ func (c *Connection) commandReceived(msg *Command) {
 	}
 }
 
+func (c *Connection) keyPressed(k int) {
+	log.Printf("cec key pressed: %d", k)
+
+	if c.KeyPresses != nil {
+		c.KeyPresses <- k
+	}
+}
+
 // List - list active devices (returns a map of Devices)
 func (c *Connection) List() map[string]Device {
 	devices := make(map[string]Device)

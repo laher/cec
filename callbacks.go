@@ -15,6 +15,15 @@ func logMessageCallback(c unsafe.Pointer, msg *C.cec_log_message) C.int {
 	return 0
 }
 
+//export keyPressed
+func keyPressed(c unsafe.Pointer, code *C.cec_keypress) C.int {
+	log.Println("code", code)
+
+	conn := (*Connection)(c)
+	conn.keyPressed(int(C.int(code.keycode)))
+	return 0
+}
+
 //export commandReceived
 func commandReceived(c unsafe.Pointer, msg *C.cec_command) C.int {
 	// log.Printf("%v", msg)
