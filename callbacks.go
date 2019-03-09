@@ -10,7 +10,7 @@ import (
 
 //export logMessageCallback
 func logMessageCallback(c unsafe.Pointer, msg *C.cec_log_message) C.int {
-	log.Println(C.GoString(msg.message))
+	log.Println("cec msg rx:", C.GoString(msg.message))
 
 	conn := (*Connection)(c)
 	conn.messageReceived(C.GoString(msg.message))
@@ -19,7 +19,7 @@ func logMessageCallback(c unsafe.Pointer, msg *C.cec_log_message) C.int {
 
 //export keyPressed
 func keyPressed(c unsafe.Pointer, code *C.cec_keypress) C.int {
-	log.Println("code", code)
+	log.Println("cec keycode rx:", code)
 
 	conn := (*Connection)(c)
 	conn.keyPressed(int(C.int(code.keycode)))
@@ -28,7 +28,7 @@ func keyPressed(c unsafe.Pointer, code *C.cec_keypress) C.int {
 
 //export commandReceived
 func commandReceived(c unsafe.Pointer, msg *C.cec_command) C.int {
-	// log.Printf("%v", msg)
+	log.Printf("cec command rx: %v", msg)
 
 	conn := (*Connection)(c)
 	cmd := &Command{

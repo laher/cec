@@ -259,6 +259,23 @@ func (c *Connection) GetDevicePhysicalAddress(address int) string {
 	return fmt.Sprintf("%x.%x.%x.%x", (uint(result)>>12)&0xf, (uint(result)>>8)&0xf, (uint(result)>>4)&0xf, uint(result)&0xf)
 }
 
+// Poll device - poll the device at
+// the given logical address
+func (c *Connection) PollDevice(address int) string {
+	result := C.libcec_poll_device(c.connection, C.cec_logical_address(address))
+
+	return fmt.Sprintf("%T: %+v", result, result)
+}
+
+//extern DECLSPEC int libcec_set_osd_string(libcec_connection_t connection, cec_namespace cec_logical_address ilogicaladdress, cec_namespace cec_display_control duration, const char* strmessage);
+func (c *Connection) SetOSDString(address int, str string) error {
+	msg := []byte(str)
+	if C.libcec_set_osd_string(c.connection, C.cec_logical_address(address), C.cec_display_control(1), (*C.char)(unsafe.Pointer(&msg[0]))) != 0 {
+		return errors.New("Error in cec_set_osd_string")
+	}
+	return nil
+}
+
 // GetDevicePowerStatus - Get the power status of the device at the
 // given address
 func (c *Connection) GetDevicePowerStatus(address int) string {
